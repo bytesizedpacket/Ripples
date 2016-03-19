@@ -1,0 +1,26 @@
+{
+	"name": "Ripples",
+	"description": "A 2D top-down RPG game with a focus on story",
+	"README": "README.md",
+	"repository": "bytesizedpacket/Ripples",
+	"author": "Jacob Pedersen <jacob@bytesizedpacket.com> (https://jacobpedersen.me)",
+	"license": "SEE LICENSE IN LICENSE",
+
+	"scripts": {
+		"watch": "gulp",
+		"build": "gulp build"
+	},
+
+	"devDependencies": {
+		"gulp": "3.9.x",
+		"gulp-uglify": "1.5.x",
+		"gulp-rename": "1.2.x",
+		"webpack-stream": "3.1.x",
+		"rimraf": "2.5.x",
+		"babel-core": "6.7.x",
+		"babel-loader": "6.2.x",
+		"babel-preset-stage-3": "6.5.x"
+	},
+
+	"engine": "node >= 5.0.0"
+}
