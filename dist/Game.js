@@ -49,7 +49,7 @@
 	/* Imports */
 
 	var Game = __webpack_require__(1);
-	var Logger = __webpack_require__(3);
+	var Logger = __webpack_require__(4);
 
 	/* Instantiations */
 	var cvs = document.getElementById('RipplesCanvas');
@@ -59,9 +59,6 @@
 
 		/* If the <canvas> has the 'data-debug' attribute, enable debugging */
 		if (cvs.getAttribute('data-debug') !== null) game.debug = true;
-
-		game.ctx.fillStyle = '#ABC';
-		game.ctx.fillRect(20, 20, 20, 20);
 
 		Logger.debug(game.debug, 'Ripples v0.0 initialized');
 	}
@@ -121,6 +118,46 @@
 
 /***/ },
 /* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Core = __webpack_require__(3);
+
+	/* We're only going to be instantiating one renderer at a time! */
+	var instance;
+
+	/**Static class for rendering the overworld view */
+	module.exports = function (_Core) {
+		_inherits(Overworld, _Core);
+
+		function Overworld() {
+			_classCallCheck(this, Overworld);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(Overworld).apply(this, arguments));
+		}
+
+		_createClass(Overworld, [{
+			key: 'render',
+			value: function render() {
+				this.ctx.fillStyle = '#ABC';
+				this.ctx.fillRect(0, 0, 20, 20);
+			}
+		}]);
+
+		return Overworld;
+	}(Core);
+
+/***/ },
+/* 3 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -133,30 +170,43 @@
 		return setTimeout(callback, 1000 / 60);
 	};
 
-	/* We're only going to be instantiating one renderer at a time! */
-	var instance;
-
-	/**Static class for rendering the overworld view */
+	/**Core rendering class */
 	module.exports = function () {
-		function Overworld(game) {
-			_classCallCheck(this, Overworld);
+		function Core(game) {
+			var _this = this;
+
+			_classCallCheck(this, Core);
 
 			this._game = game;
 			this.doDraw = false;
+			this.lastFrame = -1;
 
-			if (typeof instance === 'undefined') instance = this;else throw 'While instantiating render: Already instantiated once!';
+			/* Cached the bound function call as requestAnimationFrame switches
+	   * context */
+			this.drawCall = function (timeframe) {
+				return _this.draw(timeframe);
+			};
 		}
 
-		_createClass(Overworld, [{
+		_createClass(Core, [{
 			key: 'draw',
-			value: function draw() {
-				this.ctx.fillRect(Math.random() * 100 | 0, Math.random() * 100 | 0, 20, 20);
+			value: function draw(tf) {
+				if (!this.doDraw) return;
+
+				var tm = this.lastFrame < 0 ? 1 : (tf - this.lastFrame) / 1000;
+				this.lastFrame = tf;
+
+				this.render();
+				requestAnimationFrame(this.drawCall);
 			}
 		}, {
 			key: 'start',
 			value: function start() {
+				if (this.doDraw) return;
+
 				this.doDraw = true;
-				draw();
+				this.lastFrame = -1;
+				requestAnimationFrame(this.drawCall);
 			}
 		}, {
 			key: 'stop',
@@ -175,18 +225,11 @@
 			}
 		}]);
 
-		return Overworld;
+		return Core;
 	}();
 
-	function draw() {
-		if (instance.doDraw) {
-			instance.draw();
-			requestAnimationFrame(draw);
-		}
-	}
-
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports) {
 
 	'use strict';

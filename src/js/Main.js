@@ -14,8 +14,5 @@ else {
 	/* If the <canvas> has the 'data-debug' attribute, enable debugging */
 	if( cvs.getAttribute('data-debug') !== null ) game.debug = true;
 
-	game.ctx.fillStyle = '#ABC';
-	game.ctx.fillRect(20, 20, 20, 20);
-
 	Logger.debug(game.debug, 'Ripples v0.0 initialized');
 }
