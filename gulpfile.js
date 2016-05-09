@@ -2,6 +2,7 @@
 
 /* Import modules */
 var fs = require('fs');
+var path = require('path');
 var rimraf = require('rimraf');
 var gulp = require('gulp');
 var rename = require('gulp-rename');
@@ -28,10 +29,11 @@ const WEBPACK_OPTS = {
 	module: {
 		loaders: [ {
 			loader: 'babel-loader',
-			query: { presets: ['stage-3'] }
+			query: { presets: ['es2015', 'stage-3'] }
 		} ],
 		cache: true
-	}
+	},
+	resolve: { root: ['node_modules', path.resolve('src/js')] }
 };
 
 /* Gulp tasks */
